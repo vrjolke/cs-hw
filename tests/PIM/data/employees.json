@@ -1,0 +1,32 @@
+[
+    {
+        "firstName": "Emily",
+        "middleName": "Rose",
+        "lastName": "Thompson"
+    },
+    {
+        "firstName": "James",
+        "middleName": "Alan",
+        "lastName": "Carter"
+    },
+    {
+        "firstName": "Olivia",
+        "middleName": "",
+        "lastName": "Mitchell"
+    },
+    {
+        "firstName": "Daniel",
+        "middleName": "Lee",
+        "lastName": "Anderson"
+    },
+    {
+        "firstName": "Sophia",
+        "middleName": "",
+        "lastName": "Parker"
+    },
+    {
+        "firstName": "Ava",
+        "middleName": "Nicole",
+        "lastName": "Huges"
+    }
+]
