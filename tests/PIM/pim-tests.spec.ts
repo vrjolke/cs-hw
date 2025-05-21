@@ -90,7 +90,7 @@ test.describe('PIM tests', () => {
 
         await page
             .locator('label')
-            .filter({ hasText: personalDetails.gender})
+            .filter({ hasText: personalDetails.gender })
             .locator('span')
             .click();
         await page
@@ -100,5 +100,21 @@ test.describe('PIM tests', () => {
             .click();
 
         await expect(page.getByText('Successfully Updated')).toBeVisible();
+    });
+
+    test('add attachment', async ({ page }) => {
+        const attachmentFileName = 'attachment.pdf';
+        const employeeId = await createEmployee(page, employees[0]);
+        createdEmployeeIds.push(employeeId);
+        await page.locator('button:has-text("Add")').click();
+        const fileChooserPromise = page.waitForEvent('filechooser');
+        await page.getByText('Browse').click();
+        const fileChooser = await fileChooserPromise;
+        await fileChooser.setFiles(require('path').resolve(__dirname, './fixtures/' + attachmentFileName));
+        await page.getByRole('textbox', { name: 'Type comment here' }).fill('test1234');
+        await page.getByRole('button', { name: 'Save' }).last().click();
+
+        await expect(page.getByText('Successfully Saved')).toBeVisible();
+        await expect(page.getByRole('row').filter({ hasText: attachmentFileName })).toBeVisible();
     });
 });

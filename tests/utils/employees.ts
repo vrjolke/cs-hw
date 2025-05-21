@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 
 type Employee = {
     firstName: string;
@@ -6,7 +6,7 @@ type Employee = {
     lastName: string;
 };
 
-export async function createEmployee(page, employee: Employee): Promise<string> {
+export async function createEmployee(page: Page, employee: Employee): Promise<string> {
     await page.getByRole('link', { name: 'Add Employee' }).click();
     await expect(page.getByRole('textbox', { name: 'First Name' })).toBeVisible();
     await page.getByRole('textbox', { name: 'First Name' }).fill(employee.firstName);
@@ -16,12 +16,12 @@ export async function createEmployee(page, employee: Employee): Promise<string> 
     const employeeId = await page.locator('div:has-text("Employee Id") + div input').inputValue();
 
     await page.getByRole('button', { name: 'Save' }).click();
-    await expect(page.getByRole('heading', { name: 'Personal Details' })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole('heading', { name: 'Personal Details' })).toBeVisible();
 
     return employeeId;
 }
 
-export async function deleteEmployee(page, employeeId: string) {
+export async function deleteEmployee(page: Page, employeeId: string) {
     await page.getByRole('link', { name: 'Employee List' }).click();
     await page.locator('div:has-text("Employee Id") + div input').fill(employeeId);
     await page.getByRole('button', { name: 'Search' }).click();
