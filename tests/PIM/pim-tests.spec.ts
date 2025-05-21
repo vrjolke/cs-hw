@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import employees from './data/employees.json';
+import personalDetails from './data/personal-details.json';
 import { createEmployee, deleteEmployee } from '../utils/employees';
 
 test.describe('PIM tests', () => {
@@ -41,8 +42,55 @@ test.describe('PIM tests', () => {
         const fileChooserPromise = page.waitForEvent('filechooser');
         await page.locator('.bi-plus').click();
         const fileChooser = await fileChooserPromise;
-        await fileChooser.setFiles(require('path').resolve(__dirname, './fixtures/profile_picture.png'));
+        await fileChooser.setFiles(require('path').resolve(__dirname, './fixtures/profile-picture.png'));
         await page.getByRole('button', { name: 'Save' }).click();
+
+        await expect(page.getByText('Successfully Updated')).toBeVisible();
+    });
+
+    test('fill personal details', async ({ page }) => {
+        const employeeId = await createEmployee(page, employees[0]);
+        createdEmployeeIds.push(employeeId);
+
+        const driversLicenseInputField = page
+            .locator('div.oxd-input-group')
+            .filter({ hasText: "Driver's License Number" })
+            .getByRole('textbox');
+
+        const licenseExpirityDate = page
+            .locator('div.oxd-input-group')
+            .filter({ hasText: "License Expiry Date" })
+            .getByPlaceholder('yyyy-dd-mm')
+
+        const nationalitySelect = page
+            .locator('div.oxd-input-group')
+            .filter({ hasText: "Nationality" })
+            .locator('.oxd-select-text');
+
+        const maritalStatusSelect = page
+            .locator('div.oxd-input-group')
+            .filter({ hasText: "Marital Status" })
+            .locator('.oxd-select-text');
+
+        const dateOfBirthInputField = page
+            .locator('div.oxd-input-group')
+            .filter({ hasText: 'Date of Birth' })
+            .getByPlaceholder('yyyy-dd-mm');
+
+        await driversLicenseInputField.fill(personalDetails.driversLicense);
+        await licenseExpirityDate.fill(personalDetails.licenseExpiryDate);
+
+        await nationalitySelect.click();
+        await page.getByRole('option', { name: 'American' }).click();
+
+        await maritalStatusSelect.click();
+        await page.getByRole('option', { name: 'Single' }).click();
+
+        await dateOfBirthInputField.fill(personalDetails.dateOfBirth);
+        
+        await page.locator('label').filter({ hasText: 'Female' }).locator('span').click();
+        await page.locator('button, input[type="button"]').filter({ hasText: 'Save' }).first().click();
+
         await expect(page.getByText('Successfully Updated')).toBeVisible();
     });
 });
