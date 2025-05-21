@@ -1,4 +1,9 @@
 import { test, expect } from '@playwright/test';
+import dotenv from 'dotenv';
+
+dotenv.config();
+const username = process.env.ADMIN_USERNAME;
+const password = process.env.ADMIN_PASSWORD;
 
 test.describe('login tests', () => {
     test.beforeEach(async ({ page }) => {
@@ -6,16 +11,16 @@ test.describe('login tests', () => {
     });
 
     test('valid login', async ({ page }) => {
-        await page.getByRole('textbox', { name: 'Username' }).fill('Admin');
-        await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+        await page.getByRole('textbox', { name: 'Username' }).fill(username!);
+        await page.getByRole('textbox', { name: 'Password' }).fill(password!);
         await page.getByRole('button', { name: 'Login' }).click();
 
         await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
     });
 
     test('invalid password', async ({ page }) => {
-        await page.getByRole('textbox', { name: 'username' }).fill('Admin');
-        await page.getByRole('textbox', { name: 'password' }).fill('1234');
+        await page.getByRole('textbox', { name: 'username' }).fill(username!);
+        await page.getByRole('textbox', { name: 'password' }).fill('wrongpassword1234');
         await page.getByRole('button', { name: 'Login' }).click();
 
         await expect(page
@@ -25,8 +30,8 @@ test.describe('login tests', () => {
     });
 
     test('invalid username', async ({ page }) => {
-        await page.getByRole('textbox', { name: 'username' }).fill('1234');
-        await page.getByRole('textbox', { name: 'password' }).fill('admin123');
+        await page.getByRole('textbox', { name: 'username' }).fill('wrongusername1234');
+        await page.getByRole('textbox', { name: 'password' }).fill(password!);
         await page.getByRole('button', { name: 'Login' }).click();
 
         await expect(page
@@ -49,7 +54,7 @@ test.describe('login tests', () => {
     });
 
     test('password case sensitivity', async ({ page }) => {
-        await page.getByRole('textbox', { name: 'username' }).fill('Admin');
+        await page.getByRole('textbox', { name: 'username' }).fill(username!);
         await page.getByRole('textbox', { name: 'password' }).fill('AdMiN123');
         await page.getByRole('button', { name: 'Login' }).click();
 

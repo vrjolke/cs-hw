@@ -106,12 +106,16 @@ test.describe('PIM tests', () => {
         const attachmentFileName = 'attachment.pdf';
         const employeeId = await createEmployee(page, employees[0]);
         createdEmployeeIds.push(employeeId);
+
         await page.locator('button:has-text("Add")').click();
         const fileChooserPromise = page.waitForEvent('filechooser');
+        
         await page.getByText('Browse').click();
         const fileChooser = await fileChooserPromise;
         await fileChooser.setFiles(require('path').resolve(__dirname, './fixtures/' + attachmentFileName));
+
         await page.getByRole('textbox', { name: 'Type comment here' }).fill('test1234');
+
         await page.getByRole('button', { name: 'Save' }).last().click();
 
         await expect(page.getByText('Successfully Saved')).toBeVisible();
