@@ -21,15 +21,20 @@ export async function createEmployee(page: Page, employee: Employee): Promise<st
     return employeeId;
 }
 
-export async function deleteEmployee(page: Page, employeeId: string) {
+export async function deleteEmployee(page: Page, employeeId: string, employeeIdsArray?: string[]) {
     await page.getByRole('link', { name: 'Employee List' }).click();
     await page.locator('div:has-text("Employee Id") + div input').fill(employeeId);
     await page.getByRole('button', { name: 'Search' }).click();
-    const employeeRow = await page.getByRole('row').filter({ hasText: employeeId });
+    const employeeRow = page.getByRole('row').filter({ hasText: employeeId });
 
     await expect(employeeRow).toBeVisible();
 
-    const deleteButton = await page.getByRole('row').filter({ hasText: employeeId }).locator('button:has(.bi-trash)');
+    const deleteButton = page.getByRole('row').filter({ hasText: employeeId }).locator('button:has(.bi-trash)');
     await deleteButton.click();
     await page.locator('button:has-text("Yes, Delete")').click();
+
+    if (employeeIdsArray) {
+        const idx = employeeIdsArray.indexOf(employeeId);
+        if (idx !== -1) employeeIdsArray.splice(idx, 1);
+    }
 }

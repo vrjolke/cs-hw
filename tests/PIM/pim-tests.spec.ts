@@ -109,7 +109,7 @@ test.describe('PIM tests', () => {
 
         await page.locator('button:has-text("Add")').click();
         const fileChooserPromise = page.waitForEvent('filechooser');
-        
+
         await page.getByText('Browse').click();
         const fileChooser = await fileChooserPromise;
         await fileChooser.setFiles(require('path').resolve(__dirname, './fixtures/' + attachmentFileName));
@@ -120,5 +120,14 @@ test.describe('PIM tests', () => {
 
         await expect(page.getByText('Successfully Saved')).toBeVisible();
         await expect(page.getByRole('row').filter({ hasText: attachmentFileName })).toBeVisible();
+    });
+
+    test('delete employee', async ({ page }) => {
+        const employeeId = await createEmployee(page, employees[0]);
+        createdEmployeeIds.push(employeeId);
+        await deleteEmployee(page, employeeId, createdEmployeeIds);
+
+        await expect(page.getByText('Successfully Deleted')).toBeVisible();
+        await expect(page.getByRole('row').filter({ hasText: employeeId })).not.toBeVisible();
     });
 });
