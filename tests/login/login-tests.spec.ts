@@ -18,7 +18,10 @@ test.describe('login tests', () => {
         await page.getByRole('textbox', { name: 'password' }).fill('1234');
         await page.getByRole('button', { name: 'Login' }).click();
 
-        await expect(page.getByRole('alert').locator('div').filter({ hasText: 'Invalid credentials' })).toBeVisible();
+        await expect(page
+            .getByRole('alert')
+            .filter({ hasText: 'Invalid credentials' }))
+            .toBeVisible();
     });
 
     test('invalid username', async ({ page }) => {
@@ -26,14 +29,23 @@ test.describe('login tests', () => {
         await page.getByRole('textbox', { name: 'password' }).fill('admin123');
         await page.getByRole('button', { name: 'Login' }).click();
 
-        await expect(page.getByRole('alert').locator('div').filter({ hasText: 'Invalid credentials' })).toBeVisible();
+        await expect(page
+            .getByRole('alert')
+            .filter({ hasText: 'Invalid credentials' }))
+            .toBeVisible();
     });
 
     test('empty credentials', async ({ page }) => {
         await page.getByRole('button', { name: 'Login' }).click();
 
-        await expect(page.getByText('Required').first()).toBeVisible();
-        await expect(page.getByText('Required').last()).toBeVisible();
+        await expect(page
+            .getByText('Required')
+            .first())
+            .toBeVisible();
+        await expect(page
+            .getByText('Required')
+            .last())
+            .toBeVisible();
     });
 
     test('password case sensitivity', async ({ page }) => {
@@ -41,6 +53,9 @@ test.describe('login tests', () => {
         await page.getByRole('textbox', { name: 'password' }).fill('AdMiN123');
         await page.getByRole('button', { name: 'Login' }).click();
 
-        await expect(page.getByRole('alert').locator('div').filter({ hasText: 'Invalid credentials' })).toBeVisible();
+        await expect(page
+            .getByRole('alert')
+            .filter({ hasText: 'Invalid credentials' }))
+            .toBeVisible();
     });
 });

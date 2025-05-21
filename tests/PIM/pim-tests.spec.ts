@@ -81,15 +81,23 @@ test.describe('PIM tests', () => {
         await licenseExpirityDate.fill(personalDetails.licenseExpiryDate);
 
         await nationalitySelect.click();
-        await page.getByRole('option', { name: 'American' }).click();
+        await page.getByRole('option', { name: personalDetails.nationality }).click();
 
         await maritalStatusSelect.click();
-        await page.getByRole('option', { name: 'Single' }).click();
+        await page.getByRole('option', { name: personalDetails.maritalStatus }).click();
 
         await dateOfBirthInputField.fill(personalDetails.dateOfBirth);
-        
-        await page.locator('label').filter({ hasText: 'Female' }).locator('span').click();
-        await page.locator('button, input[type="button"]').filter({ hasText: 'Save' }).first().click();
+
+        await page
+            .locator('label')
+            .filter({ hasText: personalDetails.gender})
+            .locator('span')
+            .click();
+        await page
+            .locator('button')
+            .filter({ hasText: 'Save' })
+            .first()
+            .click();
 
         await expect(page.getByText('Successfully Updated')).toBeVisible();
     });
