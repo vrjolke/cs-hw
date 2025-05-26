@@ -25,9 +25,7 @@ test.describe('PIM tests', () => {
         createdEmployeeIds = [];
     });
 
-    test('create users', async ({ page }) => {
-        const createdEmployeeIds: string[] = [];
-
+    test('create employee', async ({ page }) => {
         for (let employee of employees) {
             const employeeId = await createEmployee(page, employee);
             createdEmployeeIds.push(employeeId);
