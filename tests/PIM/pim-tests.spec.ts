@@ -1,8 +1,8 @@
-import { test, expect } from '../utils/custom-fixtures';
+import { test, expect } from '@src/utils/custom-fixtures';
+import { createEmployee, deleteEmployee } from '@src/utils/employees';
 import employeesMultiple from './data/employees-multiple.json';
 import employeeSingle from './data/employee-single.json';
 import personalDetails from './data/personal-details.json';
-import { createEmployee, deleteEmployee } from '../utils/employees';
 
 const testAssetsPath = './test-assets/';
 

@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { test, expect } from '@src/utils/custom-fixtures';
 
 
 test.describe('login tests', () => {
@@ -15,13 +15,13 @@ test.describe('login tests', () => {
     test('invalid password', async ({ loginPage, username}) => {
         await loginPage.login(username!, 'wrongpassword1234');
 
-        await loginPage.expectInvalidCredentialsError();
+        await expect(loginPage.invalidCredentialsError).toBeVisible();
     });
 
     test('invalid username', async ({ loginPage, password }) => {
         await loginPage.login('wrongusername1234', password!);
 
-        await loginPage.expectInvalidCredentialsError();
+        await expect(loginPage.invalidCredentialsError).toBeVisible();
     });
 
     test('empty credentials', async ({ page }) => {
@@ -40,6 +40,6 @@ test.describe('login tests', () => {
     test('password case sensitivity', async ({ loginPage, username, password }) => {
         await loginPage.login(username!, password!.toUpperCase());
 
-        await loginPage.expectInvalidCredentialsError();
+        await expect(loginPage.invalidCredentialsError).toBeVisible();
     });
 });

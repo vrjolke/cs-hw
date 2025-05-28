@@ -1,7 +1,13 @@
-import { expect, Page } from '@playwright/test';
+import { type Page, type Locator } from '@playwright/test';
 
 export class LoginPage {
-  constructor(private page: Page) {}
+  readonly page: Page;
+  readonly invalidCredentialsError: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.invalidCredentialsError = page.getByRole('alert').filter({ hasText: 'Invalid credentials' });
+  }
 
   async goto() {
     await this.page.goto('/');
@@ -11,12 +17,5 @@ export class LoginPage {
     await this.page.getByRole('textbox', { name: 'Username' }).fill(username);
     await this.page.getByRole('textbox', { name: 'Password' }).fill(password);
     await this.page.getByRole('button', { name: 'Login' }).click();
-  }
-
-  async expectInvalidCredentialsError() {
-     await expect(this.page
-            .getByRole('alert')
-            .filter({ hasText: 'Invalid credentials' }))
-            .toBeVisible();
   }
 }
