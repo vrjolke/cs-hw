@@ -1,18 +1,19 @@
 import { type Page, type Locator } from '@playwright/test';
+import { get } from 'http';
 
 export class EmployeeListPage {
   readonly page: Page;
   readonly employeeListNavButton: Locator;
   readonly searchInput: Locator;
   readonly searchButton: Locator;
-  readonly deleteButton: Locator;
+  readonly confirmDeleteButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.employeeListNavButton = page.getByRole('link', { name: 'Employee List' });
     this.searchInput = page.locator('div:has-text("Employee Id") + div input');
     this.searchButton = page.getByRole('button', { name: 'Search' });
-    this.deleteButton = page.locator('button:has(.bi-trash)');
+    this.confirmDeleteButton = page.locator('button:has-text("Yes, Delete")');
   }
 
   async goto() {
@@ -33,14 +34,22 @@ export class EmployeeListPage {
     const employeeRow = await this.getEmployeeRow(employeeId);
     await employeeRow.click();
   }
-  
-  async deleteEmployee(employeeId: string) {
-    const employeeRow = this.page.getByRole('row').filter({ hasText: employeeId });
-    //await expect(employeeRow).toBeVisible();
 
-    const deleteButton = employeeRow.locator('button:has(.bi-trash)');
-    await deleteButton.click();
-    await this.page.locator('button:has-text("Yes, Delete")').click();
+  async getEmployeeRowDeleteButton(employeeId: string): Promise<Locator> {
+    return this.page
+      .getByRole('row')
+      .filter({ hasText: employeeId })
+      .locator('button:has(.bi-trash)');
   }
 
+  async deleteEmployee(employeeId: string, employeeIdsArray?: string[]) {
+    const employeeRowDeleteButton = await this.getEmployeeRowDeleteButton(employeeId);
+    await employeeRowDeleteButton.click();
+    await this.confirmDeleteButton.click();
+    
+    if (employeeIdsArray) {
+        const idx = employeeIdsArray.indexOf(employeeId);
+        if (idx !== -1) employeeIdsArray.splice(idx, 1);
+    }
+  }
 }

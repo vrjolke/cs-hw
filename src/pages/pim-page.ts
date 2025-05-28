@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { type Page } from '@playwright/test';
 
 export class PimPage {
   constructor(private page: Page) {}
@@ -6,5 +6,4 @@ export class PimPage {
   async goto() {
     await this.page.getByRole('link', { name: 'PIM' }).click();
   }
-
 }
