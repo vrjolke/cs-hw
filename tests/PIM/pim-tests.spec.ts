@@ -1,18 +1,19 @@
-import { test, expect } from '@playwright/test';
-import employees from './data/employees.json';
+import { test, expect } from '../utils/custom-fixtures';
+import employeesMultiple from './data/employees-multiple.json';
+import employeeSingle from './data/employee-single.json';
 import personalDetails from './data/personal-details.json';
 import { createEmployee, deleteEmployee } from '../utils/employees';
+
+const testAssetsPath = './test-assets/';
 
 test.describe('PIM tests', () => {
 
     let createdEmployeeIds: string[] = [];
 
-    test.beforeEach(async ({ page }) => {
-        await page.goto('/');
-        await page.getByRole('textbox', { name: 'Username' }).fill('Admin');
-        await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
-        await page.getByRole('button', { name: 'Login' }).click();
-        await page.getByRole('link', { name: 'PIM' }).click();
+    test.beforeEach(async ({ loginPage, pimPage, username, password }) => {
+        await loginPage.goto();
+        await loginPage.login(username!, password!);
+        await pimPage.goto();
     });
 
     test.afterEach(async ({ page }) => {
@@ -26,28 +27,29 @@ test.describe('PIM tests', () => {
     });
 
     test('create employee', async ({ page }) => {
-        for (let employee of employees) {
+        for (let employee of employeesMultiple) {
             const employeeId = await createEmployee(page, employee);
             createdEmployeeIds.push(employeeId);
         }
     });
 
     test('upload profile picture', async ({ page }) => {
-        const employeeId = await createEmployee(page, employees[0]);
+        const profilePictureFileName = 'profile-picture.png';
+        const employeeId = await createEmployee(page, employeeSingle);
         createdEmployeeIds.push(employeeId);
 
         await page.locator('.employee-image').click();
         const fileChooserPromise = page.waitForEvent('filechooser');
         await page.locator('.bi-plus').click();
         const fileChooser = await fileChooserPromise;
-        await fileChooser.setFiles(require('path').resolve(__dirname, './fixtures/profile-picture.png'));
+        await fileChooser.setFiles(require('path').resolve(__dirname, testAssetsPath + profilePictureFileName));
         await page.getByRole('button', { name: 'Save' }).click();
 
         await expect(page.getByText('Successfully Updated')).toBeVisible();
     });
 
     test('fill personal details', async ({ page }) => {
-        const employeeId = await createEmployee(page, employees[0]);
+        const employeeId = await createEmployee(page, employeeSingle);
         createdEmployeeIds.push(employeeId);
 
         const driversLicenseInputField = page
@@ -102,7 +104,7 @@ test.describe('PIM tests', () => {
 
     test('add attachment', async ({ page }) => {
         const attachmentFileName = 'attachment.pdf';
-        const employeeId = await createEmployee(page, employees[0]);
+        const employeeId = await createEmployee(page, employeeSingle);
         createdEmployeeIds.push(employeeId);
 
         await page.locator('button:has-text("Add")').click();
@@ -110,7 +112,7 @@ test.describe('PIM tests', () => {
 
         await page.getByText('Browse').click();
         const fileChooser = await fileChooserPromise;
-        await fileChooser.setFiles(require('path').resolve(__dirname, './fixtures/' + attachmentFileName));
+        await fileChooser.setFiles(require('path').resolve(__dirname, testAssetsPath + attachmentFileName));
 
         await page.getByRole('textbox', { name: 'Type comment here' }).fill('test1234');
 
@@ -121,7 +123,7 @@ test.describe('PIM tests', () => {
     });
 
     test('delete employee', async ({ page }) => {
-        const employeeId = await createEmployee(page, employees[0]);
+        const employeeId = await createEmployee(page, employeeSingle);
         createdEmployeeIds.push(employeeId);
         await deleteEmployee(page, employeeId, createdEmployeeIds);
 
